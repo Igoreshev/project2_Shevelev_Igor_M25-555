@@ -1,0 +1,20 @@
+
+[tool.poetry]
+name = "project2-shevelev-igor-m25-555"
+version = "0.1.0"
+description = "Создание полноценного консольного приложения, имитирующего работу с базой данных, которое можно установить и запустить как самостоятельный пакет"
+authors = ["Игорь <wer.28091@yandex.ru>"]
+packages = [
+    { include = "primitive_db", from = "src" }
+]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = ">=3.12"
+
+[tool.poetry.scripts]
+project = "primitive_db.main:main"
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
