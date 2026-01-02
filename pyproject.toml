@@ -11,10 +11,9 @@ readme = "README.md"
 
 [tool.poetry.dependencies]
 python = ">=3.12"
-prompt = "^0.4.1"
 
 [tool.poetry.scripts]
-project = "primitive_db.main:main"
+database = "primitive_db.main:main"
 
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]
