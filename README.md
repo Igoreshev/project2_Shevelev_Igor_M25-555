@@ -42,3 +42,7 @@
 
 >>>Введите команду: exit
 Выход из программы.
+
+## Демонстрация работы приложения
+
+[![asciinema demo](https://asciinema.org/a/e3078dbc-9448-4e60-8ab1-dd733a7c06e2)](https://asciinema.org/a/e3078dbc-9448-4e60-8ab1-dd733a7c06e2)
