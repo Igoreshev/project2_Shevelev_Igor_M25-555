@@ -15,7 +15,7 @@ from .core import (
     update,
     delete,
 )
-from .parser import parse_condition, parse_set_clause
+from .parser import parse_condition, parse_set_clause, parse_value
 
 
 DB_META_FILE = "db_meta.json"
@@ -118,7 +118,8 @@ def run():
 
             values_part = user_input[user_input.find("values") + 6:]
             values_part = values_part.strip().lstrip("(").rstrip(")")
-            values = [v.strip() for v in values_part.split(",")]
+            raw_values = [v.strip() for v in values_part.split(",")]
+            values = [parse_value(v) for v in raw_values]
 
             data = insert(metadata, table_name, values)
             if data:
@@ -201,3 +202,4 @@ def run():
 
         else:
             print(f"Функции {command} нет. Попробуйте снова.")
+
