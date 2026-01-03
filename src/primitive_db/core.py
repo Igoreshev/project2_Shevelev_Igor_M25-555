@@ -41,6 +41,8 @@ def drop_table(metadata: dict, table_name: str) -> dict:
 
 
     del metadata[table_name]
+
+    select_cache.clear()
     return metadata
 
 @log_time
@@ -82,6 +84,7 @@ def insert(metadata: dict, table_name: str, values: list) -> list:
 
     data.append(new_row)
     save_table_data(table_name, data)
+    select_cache.clear()
     return data
 
 select_cache = create_cacher()
@@ -110,13 +113,18 @@ def update(table_data: list, set_clause: dict, where_clause: dict) -> list:
             for col, new_value in set_clause.items():
                 if col != "ID":
                     row[col] = new_value
+    select_cache.clear()
     return table_data
 
 
 @confirm_action("удаление записи")
 @handle_db_errors
 def delete(table_data: list, where_clause: dict) -> list:
-    return [
+    new_data = [
         row for row in table_data
         if not all(row.get(col) == val for col, val in where_clause.items())
     ]
+
+    select_cache.clear()  
+    return new_data
+    

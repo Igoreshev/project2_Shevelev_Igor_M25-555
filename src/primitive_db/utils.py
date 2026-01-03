@@ -46,8 +46,7 @@ def save_table_data(table_name: str, data: list) -> None:
 
 def create_cacher():
     """
-    Фабрика кэширующей функции.
-    Кэш хранится в замыкании.
+    Фабрика кэширующей функции с возможностью очистки кэша.
     """
     cache = {}
 
@@ -59,4 +58,9 @@ def create_cacher():
         cache[key] = result
         return result
 
+    def clear():
+        cache.clear()
+
+    cache_result.clear = clear
     return cache_result
+
