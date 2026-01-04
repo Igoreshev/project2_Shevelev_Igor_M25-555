@@ -107,3 +107,4 @@ https://asciinema.org/connect/4448d41d-ebd7-4d3c-97e4-68c77f138f13 демонс�
 что ускоряет выполнение запросов.
 
 демонстрация:
+https://asciinema.org/connect/0caa2d77-5ee4-419e-ad78-b5cdde5e09b0
