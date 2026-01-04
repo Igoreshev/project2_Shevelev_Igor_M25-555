@@ -4,3 +4,6 @@ dist/
 
 __pycache__/
 *.pyc
+
+data/
+db_meta.json

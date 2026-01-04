@@ -1,6 +1,7 @@
 from .utils import load_table_data, save_table_data, create_cacher
 from .decorators import handle_db_errors, confirm_action, log_time
 
+select_cache = create_cacher()
 
 SUPPORTED_TYPES = {"int", "str", "bool"}
 
@@ -32,9 +33,7 @@ def create_table(metadata: dict, table_name: str, columns: list) -> dict:
 @confirm_action("удаление таблицы")
 @handle_db_errors
 def drop_table(metadata: dict, table_name: str) -> dict:
-    """
-    удаляет таблицу из metadata
-    """
+    """удаляет таблицу из metadata"""
 
     if table_name not in metadata:
         raise KeyError(f'Таблица "{table_name}" не существует.')
@@ -87,7 +86,6 @@ def insert(metadata: dict, table_name: str, values: list) -> list:
     select_cache.clear()
     return data
 
-select_cache = create_cacher()
 @log_time
 @handle_db_errors
 def select(table_data: list, where_clause: dict | None = None) -> list:

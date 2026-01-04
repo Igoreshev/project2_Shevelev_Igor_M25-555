@@ -17,12 +17,12 @@ from .core import (
 )
 from .parser import parse_condition, parse_set_clause, parse_value
 
-
 DB_META_FILE = "db_meta.json"
 
 
 def _print_help():
-    print("""***Команды базы данных***
+    print(
+        """***Команды базы данных***
 
 Таблицы:
 <command> create_table <имя> <столбец:тип> ...
@@ -40,7 +40,8 @@ def _print_help():
 Служебные:
 <command> help
 <command> exit
-""")
+"""
+    )
 
 
 def run():
@@ -79,15 +80,17 @@ def run():
             table_name = args[1]
             columns = args[2:]
 
-            metadata = create_table(metadata, table_name, columns)
-            save_metadata(DB_META_FILE, metadata)
+            new_metadata = create_table(metadata, table_name, columns)
+            if new_metadata is None:
+                continue
 
-            if table_name in metadata:
-                cols = ", ".join(
-                    f"{name}:{dtype}"
-                    for name, dtype in metadata[table_name].items()
-                )
-                print(f'Таблица "{table_name}" успешно создана: {cols}')
+            save_metadata(DB_META_FILE, new_metadata)
+
+            cols = ", ".join(
+                f"{name}:{dtype}"
+                for name, dtype in new_metadata[table_name].items()
+            )
+            print(f'Таблица "{table_name}" успешно создана: {cols}')
 
         # ---------- DROP TABLE ----------
         elif command == "drop_table":
@@ -96,13 +99,13 @@ def run():
                 continue
 
             table_name = args[1]
-            old_count = len(metadata)
 
-            metadata = drop_table(metadata, table_name)
-            save_metadata(DB_META_FILE, metadata)
+            new_metadata = drop_table(metadata, table_name)
+            if new_metadata is None:
+                continue
 
-            if len(metadata) < old_count:
-                print(f'Таблица "{table_name}" успешно удалена.')
+            save_metadata(DB_META_FILE, new_metadata)
+            print(f'Таблица "{table_name}" успешно удалена.')
 
         # ---------- LIST TABLES ----------
         elif command == "list_tables":
@@ -116,14 +119,16 @@ def run():
         elif args[:2] == ["insert", "into"] and "values" in args:
             table_name = args[2]
 
-            values_part = user_input[user_input.find("values") + 6:]
+            values_part = user_input[user_input.find("values") + 6 :]
             values_part = values_part.strip().lstrip("(").rstrip(")")
             raw_values = [v.strip() for v in values_part.split(",")]
             values = [parse_value(v) for v in raw_values]
 
             data = insert(metadata, table_name, values)
-            if data:
-                print(f'Запись успешно добавлена в таблицу "{table_name}".')
+            if data is None:
+                continue
+
+            print(f'Запись успешно добавлена в таблицу "{table_name}".')
 
         # ---------- SELECT ----------
         elif args[:2] == ["select", "from"]:
@@ -132,7 +137,7 @@ def run():
 
             if "where" in args:
                 where_index = args.index("where")
-                condition = " ".join(args[where_index + 1:])
+                condition = " ".join(args[where_index + 1 :])
                 where_clause = parse_condition(condition)
                 result = select(table_data, where_clause)
             else:
@@ -158,15 +163,17 @@ def run():
             where_index = args.index("where")
 
             set_clause = parse_set_clause(
-                " ".join(args[set_index + 1:where_index])
+                " ".join(args[set_index + 1 : where_index])
             )
             where_clause = parse_condition(
-                " ".join(args[where_index + 1:])
+                " ".join(args[where_index + 1 :])
             )
 
             updated_data = update(table_data, set_clause, where_clause)
-            save_table_data(table_name, updated_data)
+            if updated_data is None:
+                continue
 
+            save_table_data(table_name, updated_data)
             print(f'Таблица "{table_name}" успешно обновлена.')
 
         # ---------- DELETE ----------
@@ -176,12 +183,14 @@ def run():
 
             where_index = args.index("where")
             where_clause = parse_condition(
-                " ".join(args[where_index + 1:])
+                " ".join(args[where_index + 1 :])
             )
 
             updated_data = delete(table_data, where_clause)
-            save_table_data(table_name, updated_data)
+            if updated_data is None:
+                continue
 
+            save_table_data(table_name, updated_data)
             print(f'Записи из таблицы "{table_name}" успешно удалены.')
 
         # ---------- INFO ----------
@@ -202,4 +211,3 @@ def run():
 
         else:
             print(f"Функции {command} нет. Попробуйте снова.")
-
