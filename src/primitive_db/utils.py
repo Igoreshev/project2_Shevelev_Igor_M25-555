@@ -3,13 +3,17 @@ import os
 
 DATA_DIR = "data"
 
-def load_metadata(filepath):
-    'Загружает данные из JSON'
+
+
+def load_metadata(filepath: str) -> dict:
     try:
         with open(filepath, "r", encoding="utf-8") as file:
             return json.load(file)
     except FileNotFoundError:
         return {}
+    except json.JSONDecodeError:
+        return {}
+
 
 def save_metadata(filepath: str, data: dict) -> None:
     'Сохраняем данные'
